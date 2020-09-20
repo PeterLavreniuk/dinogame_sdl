@@ -8,21 +8,21 @@
 
 #include "DummySprite.h"
 
+enum DinoState{
+    DINO_STATE_RUN,
+    DINO_STATE_JUMP,
+    DINO_STATE_DIE
+};
+enum DinoFrame{
+    DINO_FRAME_RUN_1 = 0,
+    DINO_FRAME_RUN_2 = 1,
+    DINO_FRAME_JUM = 2,
+    DINO_FRAME_DIE = 3,
+    DINO_FRAME_TOTAL_COUNT = 4
+};
+
 class Dino {
 private:
-    enum DinoState{
-        DINO_STATE_RUN,
-        DINO_STATE_JUMP,
-        DINO_STATE_DIE
-    };
-    enum DinoFrame{
-        DINO_FRAME_RUN_1 = 0,
-        DINO_FRAME_RUN_2 = 1,
-        DINO_FRAME_JUM = 2,
-        DINO_FRAME_DIE = 3,
-        DINO_FRAME_TOTAL_COUNT = 4
-    };
-
     float x, y, floorPosition;
     float jumpPower = 0.0f;
     DinoState currentState;

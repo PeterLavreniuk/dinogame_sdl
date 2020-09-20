@@ -1,6 +1,9 @@
 #include <iostream>
 #include <SDL2/SDL.h>
+#include <vector>
+#include <algorithm>
 #include "Dino.h"
+#include "CactusFactory.h"
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
@@ -60,12 +63,18 @@ int main() {
     SDL_SetRenderDrawBlendMode(gRenderer, SDL_BLENDMODE_BLEND);
 
     auto dino = new Dino(64,132);
+    auto cactusFactory = new CactusFactory();
+    cactusFactory->initialize(gRenderer, "cactuses.bmp");
     dino->initialize(gRenderer, "dino.bmp");
 
     backGround = new DummySprite();
     backGround->load(gRenderer, "background.bmp");
 
-    Uint32 animationTicks = 1;
+    std::vector<Cactus*> cactuses;
+
+    Uint32 animationTicks = 0;
+    float gameSpeed = 2.0f;
+    int offsetSpeed = 1;
 
     while(!quit){
         if(state[SDL_SCANCODE_ESCAPE]){
@@ -81,12 +90,17 @@ int main() {
             }
         }
 
+        if(animationTicks % 128 == 0){
+            auto cactus = cactusFactory->Create(BIG_CACTUS_1, gameSpeed);
+            cactuses.push_back(cactus);
+        }
+
         dino->update(animationTicks);
 
         SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(gRenderer);
 
-        --backgroundOffset;
+        backgroundOffset -= offsetSpeed;
         if(backgroundOffset < -backGround->getW()){
             backgroundOffset = 0;
         }
@@ -95,6 +109,16 @@ int main() {
         backGround->render(gRenderer, backgroundOffset + backGround->getW(), 0);
 
         dino->render(gRenderer);
+        for(auto &cactus : cactuses){
+            cactus->update();
+            cactus->render(gRenderer);
+        }
+
+        cactuses.erase(std::remove_if(
+                cactuses.begin(), cactuses.end(),
+                [](Cactus* cactus){
+                    return !cactus->isAlive();
+                }), cactuses.end());
 
         SDL_RenderPresent(gRenderer);
 
@@ -104,8 +128,14 @@ int main() {
         if( sleep >= 0 ) {
             SDL_Delay(sleep);
             ++animationTicks;
-            if(animationTicks > 257)
-                animationTicks = 1;
+            if(animationTicks >= 1024) {
+                animationTicks = 0;
+                if(gameSpeed < 15.0f){
+                    gameSpeed += 0.5f;
+                    offsetSpeed += 1;
+                    std::cout<<"Speed up!"<<std::endl;
+                }
+            }
         }
     }
 
