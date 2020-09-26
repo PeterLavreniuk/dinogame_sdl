@@ -24,13 +24,13 @@ enum CactusFrame{
 
 class Cactus {
 private:
-    float x, y, speed;
+    float x, y;
     CactusType type;
     DummySprite* sprite = nullptr;
     SDL_Rect frame;
 public:
-    Cactus(float x, float y, float speed, DummySprite* sprite, SDL_Rect frame);
-    void update();
+    Cactus(float x, float y, CactusType type, DummySprite* sprite, SDL_Rect frame);
+    void update(float speed);
     void render(SDL_Renderer* renderer);
     bool isAlive () const { return this->x >= -10; }
 };

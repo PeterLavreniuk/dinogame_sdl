@@ -15,13 +15,10 @@ void CactusFactory::initialize(SDL_Renderer *renderer, std::string texturePath) 
     this->frames[BIG_CACTUS_FRAME_2] = {34*3,0,34,48};
 }
 
-Cactus *CactusFactory::Create(CactusType type, float speed) {
+Cactus *CactusFactory::Create(CactusType type) {
     if(type == BIG_CACTUS_1) {
-        return new Cactus(641,132, speed, this->sprite, this->frames[BIG_CACTUS_FRAME_1]);
+        return new Cactus(641,132, type,
+                          this->sprite, this->frames[BIG_CACTUS_FRAME_1]);
     }
-    return nullptr;
-}
-
-Cactus *CactusFactory::Create(float speed) {
     return nullptr;
 }

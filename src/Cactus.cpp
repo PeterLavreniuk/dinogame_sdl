@@ -4,15 +4,16 @@
 
 #include "Cactus.h"
 
-Cactus::Cactus(float x, float y, float speed, DummySprite *sprite, SDL_Rect frame) {
+Cactus::Cactus(float x, float y, CactusType type,
+               DummySprite *sprite, SDL_Rect frame) {
     this->x = x;
     this->y = y;
+    this->type = type;
     this->frame = frame;
     this->sprite = sprite;
-    this->speed = speed;
 }
 
-void Cactus::update() {
+void Cactus::update(float speed) {
     this->x -= speed;
 }
 

@@ -15,8 +15,7 @@ private:
     SDL_Rect frames[CACTUS_FRAME_TOTAL_COUNT];
 public:
     void initialize(SDL_Renderer* renderer, std::string texturePath);
-    Cactus* Create(CactusType type, float speed);
-    Cactus* Create(float speed);
+    Cactus* Create(CactusType type);
 };
 
 

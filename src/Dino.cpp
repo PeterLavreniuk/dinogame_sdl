@@ -67,7 +67,7 @@ void Dino::update(Uint32 tickCount) {
 
 void Dino::initialize(SDL_Renderer *renderer, std::string texturePath) {
     auto dinoSprite = new DummySprite();
-    dinoSprite->load(renderer, "dino.bmp");
+    dinoSprite->load(renderer, texturePath);
     this->sprite = dinoSprite;
 
     this->frames[DINO_FRAME_RUN_1] = {0,0,42,44};

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "Dino.h"
 #include "CactusFactory.h"
+#include "ScoreHandler.h"
 
 SDL_Window* gWindow = nullptr;
 SDL_Renderer* gRenderer = nullptr;
@@ -64,8 +65,10 @@ int main() {
 
     auto dino = new Dino(64,132);
     auto cactusFactory = new CactusFactory();
+    auto scoreHandler = new ScoreHandler();
     cactusFactory->initialize(gRenderer, "cactuses.bmp");
     dino->initialize(gRenderer, "dino.bmp");
+    scoreHandler->initialize(gRenderer, "numbers.bmp");
 
     backGround = new DummySprite();
     backGround->load(gRenderer, "background.bmp");
@@ -75,6 +78,7 @@ int main() {
     Uint32 animationTicks = 0;
     float gameSpeed = 2.0f;
     int offsetSpeed = 1;
+    int score = 0;
 
     while(!quit){
         if(state[SDL_SCANCODE_ESCAPE]){
@@ -91,11 +95,12 @@ int main() {
         }
 
         if(animationTicks % 128 == 0){
-            auto cactus = cactusFactory->Create(BIG_CACTUS_1, gameSpeed);
+            auto cactus = cactusFactory->Create(BIG_CACTUS_1);
             cactuses.push_back(cactus);
         }
 
         dino->update(animationTicks);
+        scoreHandler->update(score);
 
         SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
         SDL_RenderClear(gRenderer);
@@ -107,10 +112,11 @@ int main() {
 
         backGround->render(gRenderer, backgroundOffset, 0);
         backGround->render(gRenderer, backgroundOffset + backGround->getW(), 0);
+        scoreHandler->render(gRenderer);
 
         dino->render(gRenderer);
         for(auto &cactus : cactuses){
-            cactus->update();
+            cactus->update(gameSpeed);
             cactus->render(gRenderer);
         }
 
@@ -125,17 +131,23 @@ int main() {
         next_game_tick += 1000 / 60;
         sleep = next_game_tick - SDL_GetTicks();
 
+        ++animationTicks;
+
+        if(animationTicks % 16 == 0){
+            ++score;
+        }
+
+        if(animationTicks % 1024 == 0){
+            animationTicks = 0;
+            if(gameSpeed < 15.0f){
+                gameSpeed += 0.5f;
+                offsetSpeed += 1;
+                std::cout<<"Speed up!"<<std::endl;
+            }
+        }
+
         if( sleep >= 0 ) {
             SDL_Delay(sleep);
-            ++animationTicks;
-            if(animationTicks >= 1024) {
-                animationTicks = 0;
-                if(gameSpeed < 15.0f){
-                    gameSpeed += 0.5f;
-                    offsetSpeed += 1;
-                    std::cout<<"Speed up!"<<std::endl;
-                }
-            }
         }
     }
 
